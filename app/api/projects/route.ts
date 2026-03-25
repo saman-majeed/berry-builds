@@ -14,11 +14,13 @@ export async function POST(req: Request) {
       name: body.name,
       category: body.category,
       tag: body.tag || '',
-      image: body.image,
-      url: body.url || '',
+      // Map both 'image' and 'image_url' to handle different form naming
+      image: body.image || body.image_url || '',
+      // Map both 'url' and 'live_url' to match your UI field
+      url: body.url || body.live_url || '',
       description: body.description || '',
       status: body.status || 'Active',
-      is_featured: body.is_featured || false, // ADDED: Save featured status
+      is_featured: body.is_featured || false,
       customer_name: body.customer_name || '',
       customer_number: body.customer_number || '',
       customer_reviews: body.customer_reviews || ''
@@ -41,11 +43,11 @@ export async function PUT(req: Request) {
         name: updates.name,
         category: updates.category,
         tag: updates.tag || '',
-        image: updates.image,
-        url: updates.url || '',
+        image: updates.image || updates.image_url,
+        url: updates.url || updates.live_url,
         description: updates.description || '',
         status: updates.status || 'Active',
-        is_featured: updates.is_featured, // ADDED: Update featured status
+        is_featured: updates.is_featured,
         customer_name: updates.customer_name || '',
         customer_number: updates.customer_number || '',
         customer_reviews: updates.customer_reviews || ''

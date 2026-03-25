@@ -10,7 +10,7 @@ const initialForm = {
   url: '',
   description: '',
   status: 'Active',
-  is_featured: false, // ADDED: Featured toggle state
+  is_featured: false,
   customer_name: '',
   customer_number: '',
   customer_reviews: ''
@@ -18,6 +18,7 @@ const initialForm = {
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<any[]>([])
+  const [searchTerm, setSearchTerm] = useState('') // ADDED: Search state
   const [modal, setModal] = useState(false)
   const [editId, setEditId] = useState<number | null>(null)
   const [form, setForm] = useState(initialForm)
@@ -32,6 +33,12 @@ export default function AdminProjectsPage() {
   }
 
   useEffect(() => { load() }, [])
+
+  // ADDED: Filter logic
+  const filteredProjects = projects.filter(p =>
+    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.category.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -98,7 +105,7 @@ export default function AdminProjectsPage() {
       url: p.url || '',
       description: p.description || '',
       status: p.status || 'Active',
-      is_featured: p.is_featured || false, // ADDED: Load featured status from DB
+      is_featured: p.is_featured || false,
       customer_name: p.customer_name || '',
       customer_number: p.customer_number || '',
       customer_reviews: p.customer_reviews || ''
@@ -116,7 +123,7 @@ export default function AdminProjectsPage() {
 
   return (
     <div className="p-10 bg-black min-h-screen text-white">
-      <div className="flex justify-between items-center mb-10">
+      <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Project Management</h1>
           <p className="text-zinc-500 text-sm">Efficient portfolio management</p>
@@ -129,15 +136,25 @@ export default function AdminProjectsPage() {
         </button>
       </div>
 
+      {/* ADDED: ADMIN SEARCH BAR */}
+      <div className="mb-10 max-w-md">
+        <input
+          type="text"
+          placeholder="Search projects by name or category..."
+          className="w-full bg-zinc-900 border border-zinc-800 p-3 rounded-xl text-sm focus:border-blue-500 outline-none"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {projects.map((p) => (
+        {filteredProjects.map((p) => (
           <div key={p.id} className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl group relative overflow-hidden">
             <div className="relative h-40 w-full mb-4">
-              <img src={p.image || '/placeholder.png'} className="w-full h-full object-cover rounded-lg" alt="" />
+              <img src={p.image || '/logo.png'} className="w-full h-full object-cover rounded-lg" alt="" />
               <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-blue-400 border border-white/10">
                 {p.status}
               </div>
-              {/* VISUAL INDICATOR FOR FEATURED */}
               {p.is_featured && (
                 <div className="absolute top-2 left-2 bg-blue-600 text-[10px] px-2 py-1 rounded font-bold uppercase">Featured</div>
               )}
@@ -162,7 +179,6 @@ export default function AdminProjectsPage() {
             </div>
 
             <div className="space-y-6">
-              {/* ADDED: FEATURED TOGGLE SECTION */}
               <div className="flex items-center gap-3 p-4 bg-blue-600/10 border border-blue-600/30 rounded-xl">
                 <input
                   type="checkbox"
