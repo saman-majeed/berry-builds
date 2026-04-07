@@ -1,4 +1,4 @@
-import { getDb } from '@/lib/db'
+import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
@@ -7,17 +7,25 @@ export const metadata: Metadata = {
   description: 'Full-stack digital solutions from web development to AI.',
 }
 
+// Ensure the page stays updated with your admin edits
+export const revalidate = 0;
+
 export default async function ServicesPage() {
-  const db = getDb()
-  const allServices = db.prepare("SELECT * FROM services WHERE status='active' ORDER BY category, name").all() as any[]
+  // Fetch data from Supabase
+  const { data: allServices } = await supabase
+    .from('services')
+    .select('*')
+    .order('category', { ascending: true })
+
+  // Static stats as per your original design
   const stats = {
-    projects: (db.prepare("SELECT value FROM settings WHERE key='stats-projects'").get() as any)?.value || '50+',
-    clients:  (db.prepare("SELECT value FROM settings WHERE key='stats-clients'").get() as any)?.value || '40+',
-    satisfaction: (db.prepare("SELECT value FROM settings WHERE key='stats-satisfaction'").get() as any)?.value || '99%',
-    experience:   (db.prepare("SELECT value FROM settings WHERE key='stats-experience'").get() as any)?.value || '5+',
+    projects: '50+',
+    clients: '40+',
+    satisfaction: '99%',
+    experience: '5+',
   }
 
-  const grouped = allServices.reduce((acc: Record<string, any[]>, s) => {
+  const grouped = (allServices || []).reduce((acc: Record<string, any[]>, s) => {
     if (!acc[s.category]) acc[s.category] = []
     acc[s.category].push(s)
     return acc
@@ -36,11 +44,12 @@ export default async function ServicesPage() {
         <p style={{ color: 'var(--muted)', maxWidth: '580px', margin: '0 auto 2rem' }}>
           From concept to deployment — end-to-end solutions that help businesses innovate and scale.
         </p>
+
         {/* Stats */}
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '2px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '13px', overflow: 'hidden', maxWidth: '700px', margin: '0 auto' }}>
-          {[['Projects','stats-projects',stats.projects],['Clients','stats-clients',stats.clients],['Satisfaction','stats-satisfaction',stats.satisfaction],['Experience','stats-experience',stats.experience]].map(([label,,val],i) => (
+          {[['Projects', stats.projects], ['Clients', stats.clients], ['Satisfaction', stats.satisfaction], ['Experience', stats.experience]].map(([label, val], i) => (
             <div key={label} style={{ flex: '1 1 140px', textAlign: 'center', padding: '1.4rem 1rem', borderRight: i < 3 ? '1px solid var(--border)' : 'none' }}>
-              <div className="stat-num">{val}</div>
+              <div className="stat-num" style={{ color: 'white', fontSize: '1.5rem', fontWeight: 800 }}>{val}</div>
               <div style={{ color: 'var(--muted)', fontSize: '0.74rem', marginTop: '0.2rem' }}>{label}</div>
             </div>
           ))}
@@ -60,6 +69,7 @@ export default async function ServicesPage() {
                   {s.icon} {s.name}
                 </h3>
                 <p style={{ color: 'var(--muted)', fontSize: '0.84rem', marginBottom: '1rem' }}>{s.description || s.shortDesc}</p>
+
                 {s.deliverables && (
                   <ul style={{ listStyle: 'none', marginBottom: '1.1rem', display: 'flex', flexDirection: 'column', gap: '0.38rem' }}>
                     {s.deliverables.split('\n').filter(Boolean).map((d: string) => (
@@ -70,6 +80,7 @@ export default async function ServicesPage() {
                     ))}
                   </ul>
                 )}
+
                 {s.stack && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                     {s.stack.split(',').map((t: string) => (
@@ -85,7 +96,7 @@ export default async function ServicesPage() {
         </div>
       ))}
 
-      {/* CTA */}
+      {/* CTA Section */}
       <div style={{ textAlign: 'center', background: 'rgba(109,40,217,.08)', border: '1px solid rgba(109,40,217,.2)', borderRadius: '13px', padding: '2.5rem', marginTop: '1rem' }}>
         <h2 style={{ fontFamily: 'Syne, sans-serif', color: 'white', fontSize: '1.7rem', marginBottom: '0.7rem' }}>Ready to Start Your Project?</h2>
         <p style={{ color: 'var(--muted)', marginBottom: '1.5rem' }}>Let's discuss how we can bring your ideas to life.</p>
