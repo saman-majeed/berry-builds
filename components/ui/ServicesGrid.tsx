@@ -1,41 +1,55 @@
 import Link from 'next/link'
+import Reveal from '@/components/ui/Reveal'
 
-// ─── ServicesGrid ─────────────────────────────────────────
 export default function ServicesGrid({ services }: { services: any[] }) {
   return (
-    <section style={{ background: 'var(--surface)', padding: '80px 5%' }}>
-      <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <span style={{ color: 'var(--accent3)', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>What We Do</span>
-        <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: 'clamp(1.7rem,3.5vw,2.7rem)', color: 'white', letterSpacing: '-0.025em', margin: '0.5rem 0' }}>Our Services</h2>
-        <p style={{ color: 'var(--muted)', maxWidth: '480px', margin: '0 auto' }}>Comprehensive digital solutions tailored to your business needs.</p>
-      </div>
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-        gap: '1px', background: 'var(--border)',
-        border: '1px solid var(--border)', borderRadius: '13px', overflow: 'hidden',
-      }}>
-        {services.map((s: any) => (
-          <Link key={s.id} href="/services" style={{
-            background: 'var(--surface2)', padding: '1.7rem 1.5rem',
-            textDecoration: 'none', display: 'block',
-          }}>
-            <div style={{
-              width: '40px', height: '40px',
-              background: 'rgba(109,40,217,.14)', border: '1px solid rgba(109,40,217,.28)',
-              borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              marginBottom: '1rem', fontSize: '1.15rem',
-            }}>{s.icon}</div>
-            <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '0.97rem', color: 'white', marginBottom: '0.35rem' }}>{s.name}</h3>
-            <p style={{ color: 'var(--muted)', fontSize: '0.83rem', lineHeight: 1.5 }}>{s.shortDesc}</p>
-            <span style={{ color: 'var(--accent3)', fontSize: '0.78rem', fontWeight: 600, marginTop: '0.85rem', display: 'inline-block' }}>Learn more →</span>
+    <section className="relative overflow-hidden bg-surface px-[5%] py-24">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 h-[200px] w-[80%] -translate-x-1/2 rounded-full bg-gradient-to-b from-accent/10 to-transparent blur-3xl"
+      />
+      <div className="relative mx-auto max-w-[1200px] text-center">
+        <Reveal className="mb-14 inline-block">
+          <span className="section-label">What We Do</span>
+          <h2 className="mt-6 font-syne text-[clamp(1.7rem,3.5vw,2.7rem)] font-bold tracking-tight text-white">
+            Our Services
+          </h2>
+          <p className="mx-auto mt-4 max-w-[480px] text-muted leading-relaxed">
+            Comprehensive digital solutions tailored to your business needs.
+          </p>
+        </Reveal>
+
+        <div className="grid gap-[1px] overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+          {services.map((s: any, i: number) => (
+            <Reveal key={s.id} delayMs={Math.min(i * 60, 300)}>
+              <Link
+                href="/services"
+                className="hover-lift-card group relative block border-0 bg-surface2 p-8 text-left no-underline"
+              >
+                <span
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent/0 to-accent/0 opacity-0 transition-opacity duration-500 group-hover:from-accent/[0.06] group-hover:to-transparent group-hover:opacity-100"
+                  aria-hidden
+                />
+                <div className="relative">
+                  <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-accent/35 bg-accent/10 text-xl transition-[transform,border-color,box-shadow] duration-300 group-hover:scale-[1.06] group-hover:border-accent2/50 group-hover:shadow-[0_0_24px_rgba(124,58,237,0.2)]">
+                    {s.icon}
+                  </div>
+                  <h3 className="font-syne text-[0.97rem] font-bold text-white">{s.name}</h3>
+                  <p className="mt-2 text-[0.83rem] leading-relaxed text-muted">{s.shortDesc}</p>
+                  <span className="mt-6 inline-flex items-center text-[0.78rem] font-semibold text-accent2 transition-[gap,color] duration-300 group-hover:gap-2 group-hover:text-accent3">
+                    Learn more →
+                  </span>
+                </div>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal className="mt-12 inline-block">
+          <Link href="/services" className="btn-secondary inline-flex">
+            View All Services
           </Link>
-        ))}
-      </div>
-      <div style={{ textAlign: 'center', marginTop: '1.8rem' }}>
-        <Link href="/services" style={{
-          border: '1px solid var(--border)', color: 'var(--text)', padding: '0.7rem 1.7rem',
-          borderRadius: '8px', fontWeight: 500, fontSize: '0.9rem', textDecoration: 'none',
-        }}>View All Services</Link>
+        </Reveal>
       </div>
     </section>
   )

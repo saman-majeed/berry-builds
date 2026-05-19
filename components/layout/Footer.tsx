@@ -1,54 +1,47 @@
 import Link from 'next/link'
-import Image from 'next/image' // Added for the logo
-import { usePathname } from 'next/navigation'
+import Image from 'next/image'
+import Reveal from '@/components/ui/Reveal'
 
 export default function Footer() {
-  return (
-    <footer style={{
-      background: 'var(--surface)', borderTop: '1px solid var(--border)',
-      padding: '2rem 5%', display: 'flex', alignItems: 'center',
-      justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem',
-    }}>
-      {/* LOGO SECTION UPDATED */}
-      <Link href="/" style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '10px',
-        fontFamily: 'Syne, sans-serif',
-        fontWeight: 700,
-        fontSize: '1.1rem',
-        color: 'white',
-        textDecoration: 'none'
-      }}>
-        <Image
-          src="/logo.png" // Ensure this is in your 'public' folder
-          alt="BerryBuilds Logo"
-          width={28}
-          height={28}
-          style={{ borderRadius: '50%' }}
-        />
-        <span>
-          Berry<span style={{ color: 'var(--accent3)' }}>Builds</span>
-        </span>
-      </Link>
+  const linkItems = [
+    { href: '/projects', label: 'Projects' },
+    { href: '/services', label: 'Services' },
+    { href: '/contact', label: 'Contact' },
+    { href: '/admin', label: 'Admin' },
+  ]
 
-      <ul style={{ listStyle: 'none', display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-        {[
-          { href: '/projects', label: 'Projects' },
-          { href: '/services', label: 'Services' },
-          { href: '/contact', label: 'Contact' },
-          { href: '/admin', label: 'Admin' },
-        ].map(l => (
-          <li key={l.href}>
-            <Link href={l.href} style={{ color: 'var(--muted)', fontSize: '0.82rem', textDecoration: 'none' }}>
-              {l.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <span style={{ color: 'var(--muted)', fontSize: '0.76rem' }}>
-        © {new Date().getFullYear()} BerryBuilds. All rights reserved.
-      </span>
+  return (
+    <footer className="border-t border-border bg-surface px-[5%] py-12">
+      <Reveal>
+        <div className="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-8 sm:flex-row sm:flex-wrap">
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 font-syne text-lg font-bold text-white no-underline transition-opacity hover:opacity-90"
+          >
+            <Image src="/logo.png" alt="BerryBuilds Logo" width={28} height={28} className="rounded-full" />
+            <span>
+              Berry<span className="text-accent3">Builds</span>
+            </span>
+          </Link>
+
+          <ul className="flex list-none flex-wrap justify-center gap-x-8 gap-y-3">
+            {linkItems.map((l) => (
+              <li key={l.href}>
+                <Link
+                  href={l.href}
+                  className="text-[0.82rem] text-muted no-underline transition-colors hover:text-accent3"
+                >
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <p className="text-center text-[0.76rem] text-muted sm:text-right">
+            © {new Date().getFullYear()} BerryBuilds. All rights reserved.
+          </p>
+        </div>
+      </Reveal>
     </footer>
   )
 }

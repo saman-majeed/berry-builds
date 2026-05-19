@@ -13,18 +13,18 @@ const config: Config = {
         dm: ['DM Sans', 'sans-serif'],
       },
       colors: {
-        bg: '#08080e',
-        surface: '#101018',
-        surface2: '#15151f',
-        surface3: '#1a1a27',
-        border: '#1e1e30',
-        border2: '#252538',
-        accent: '#6d28d9',
-        accent2: '#8b5cf6',
-        accent3: '#a78bfa',
+        bg: '#06060b',
+        surface: '#0c0c14',
+        surface2: '#12121c',
+        surface3: '#181824',
+        border: '#232336',
+        border2: '#2e2e44',
+        accent: '#7c3aed',
+        accent2: '#a78bfa',
+        accent3: '#c4b5fd',
       },
       animation: {
-        'fade-up': 'fadeUp 0.6s ease both',
+        'fade-up': 'fadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) both',
       },
       keyframes: {
         fadeUp: {

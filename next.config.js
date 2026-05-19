@@ -1,8 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['better-sqlite3'],
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'ngxjiihozulpdwjdyzro.supabase.co', // Your specific project ID from the screenshot
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
   },
-}
+};
 
-module.exports = nextConfig
+export default nextConfig;

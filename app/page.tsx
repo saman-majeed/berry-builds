@@ -46,15 +46,12 @@ export default async function HomePage() {
   const { stats, services, projects } = await getData()
 
   return (
-    <main className="bg-black min-h-screen">
+    <div className="relative min-h-screen overflow-x-hidden">
       <HeroSection stats={stats} />
       <ServicesGrid services={services} />
-
-      {/* This will now only show the 3 projects you toggled in Admin */}
       <ProjectsPreview projects={projects} />
-
       <WhySection />
-
-    </main>
+      <CtaSection />
+    </div>
   )
 }

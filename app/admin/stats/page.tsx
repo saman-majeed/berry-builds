@@ -4,8 +4,16 @@ import { useEffect, useState } from 'react'
 export default function StatsPage() {
   const [vals, setVals] = useState({ 'stats-projects':'50+','stats-clients':'40+','stats-satisfaction':'99%','stats-experience':'5+' })
   const [saved, setSaved] = useState(false)
-  useEffect(()=>{fetch('/api/settings').then(r=>r.json()).then(d=>setVals(v=>({...v,...Object.fromKeysByPrefixFilter(d,'stats-')})))}, [])
-  function fromKeysByPrefixFilter(obj:any, prefix:string){ const r:any={}; for(const k in obj) if(k.startsWith(prefix)) r[k]=obj[k]; return r }
+  function fromKeysByPrefixFilter(obj: Record<string, string>, prefix: string): Record<string, string> {
+    const r: Record<string, string> = {}
+    for (const k in obj) if (k.startsWith(prefix)) r[k] = obj[k]
+    return r
+  }
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((r) => r.json())
+      .then((d) => setVals((v) => ({ ...v, ...fromKeysByPrefixFilter(d as Record<string, string>, 'stats-') })))
+  }, [])
   async function save(){
     await fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(vals)})
     setSaved(true); setTimeout(()=>setSaved(false),2500)

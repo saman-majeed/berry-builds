@@ -18,7 +18,7 @@ const initialForm = {
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<any[]>([])
-  const [searchTerm, setSearchTerm] = useState('') // ADDED: Search state
+  const [searchTerm, setSearchTerm] = useState('') // Search state
   const [modal, setModal] = useState(false)
   const [editId, setEditId] = useState<number | null>(null)
   const [form, setForm] = useState(initialForm)
@@ -34,10 +34,10 @@ export default function AdminProjectsPage() {
 
   useEffect(() => { load() }, [])
 
-  // ADDED: Filter logic
+  // Filter logic
   const filteredProjects = projects.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.category.toLowerCase().includes(searchTerm.toLowerCase())
+    p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.category?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,8 +57,12 @@ export default function AdminProjectsPage() {
     try {
       let imageUrl = form.image
 
+      // 1. If a new file is uploaded, push it directly to Supabase Storage
       if (selectedFile) {
-        const fileName = `${Date.now()}-${selectedFile.name}`
+        const fileExt = selectedFile.name.split('.').pop()
+        const uniqueId = Math.random().toString(36).substring(2, 15)
+        const fileName = `${Date.now()}-${uniqueId}.${fileExt}`
+
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('project-images')
           .upload(fileName, selectedFile)
@@ -73,7 +77,13 @@ export default function AdminProjectsPage() {
       }
 
       const method = editId ? 'PUT' : 'POST'
-      const payload = editId ? { ...form, image: imageUrl, id: editId } : { ...form, image: imageUrl }
+
+      // FIX: We explicitly override the form's base64 data image property with our fresh Supabase imageUrl reference 
+      const payload = {
+        ...form,
+        image: imageUrl,
+        ...(editId && { id: editId })
+      }
 
       const res = await fetch('/api/projects', {
         method,
@@ -129,19 +139,19 @@ export default function AdminProjectsPage() {
           <p className="text-zinc-500 text-sm">Efficient portfolio management</p>
         </div>
         <button
-          onClick={() => { setEditId(null); setForm(initialForm); setModal(true) }}
+          onClick={() => { setEditId(null); setForm(initialForm); setModal(true); setSelectedFile(null); }}
           className="bg-blue-600 px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-900/20"
         >
           + Add New Project
         </button>
       </div>
 
-      {/* ADDED: ADMIN SEARCH BAR */}
+      {/* ADMIN SEARCH BAR */}
       <div className="mb-10 max-w-md">
         <input
           type="text"
           placeholder="Search projects by name or category..."
-          className="w-full bg-zinc-900 border border-zinc-800 p-3 rounded-xl text-sm focus:border-blue-500 outline-none"
+          className="w-full bg-zinc-900 border border-zinc-800 p-3 rounded-xl text-sm focus:border-blue-500 outline-none text-white"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -239,7 +249,7 @@ export default function AdminProjectsPage() {
               <div>
                 <label className="text-zinc-500 text-[10px] uppercase mb-1 block font-bold">Featured Image</label>
                 <input type="file" className="w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-zinc-800 file:text-zinc-300 hover:file:bg-zinc-700" onChange={handleImage} accept="image/*" />
-                {form.image && <img src={form.image} className="mt-4 h-32 rounded-lg border border-zinc-800" alt="Preview" />}
+                {form.image && <img src={form.image} className="mt-4 h-32 rounded-lg border border-zinc-800 object-cover" alt="Preview" />}
               </div>
             </div>
 

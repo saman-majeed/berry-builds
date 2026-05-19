@@ -9,82 +9,81 @@ interface Stats {
 
 export default function HeroSection({ stats }: { stats: Stats }) {
   return (
-    <section style={{
-      minHeight: 'calc(100vh - 66px)',
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      textAlign: 'center', padding: '80px 5%',
-      position: 'relative', overflow: 'hidden',
-    }}>
-      {/* Backgrounds */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'radial-gradient(ellipse 80% 55% at 50% 0%, rgba(109,40,217,.2), transparent 70%), radial-gradient(ellipse 40% 35% at 85% 75%, rgba(139,92,246,.12), transparent)',
-      }} />
-      <div className="hero-grid-bg" style={{ position: 'absolute', inset: 0 }} />
+    <section
+      className="relative flex min-h-[calc(100vh-66px)] flex-col items-center justify-center overflow-hidden px-[5%] pb-16 pt-10 text-center"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_55%_at_50%_0%,rgba(124,58,237,0.22),transparent_70%),radial-gradient(ellipse_40%_35%_at_85%_75%,rgba(232,121,249,0.12),transparent)]"
+      />
+      <div className="hero-orb left-[-10%] top-[15%] h-[min(45vw,420px)] w-[min(45vw,420px)] bg-accent" />
+      <div className="hero-orb right-[-5%] top-[40%] h-[min(38vw,340px)] w-[min(38vw,340px)] bg-[#e879f9]" />
+      <div className="hero-orb bottom-[-10%] left-[30%] h-[min(35vw,300px)] w-[min(35vw,300px)] bg-sky-500/40" />
+      <div className="hero-grid-bg pointer-events-none absolute inset-0" />
 
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div className="animate-fade-up" style={{
-          display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
-          background: 'rgba(109,40,217,.12)', border: '1px solid rgba(109,40,217,.35)',
-          color: 'var(--accent3)', padding: '0.28rem 0.9rem', borderRadius: '100px',
-          fontSize: '0.74rem', fontWeight: 700, letterSpacing: '0.06em',
-          textTransform: 'uppercase', marginBottom: '1.5rem',
-        }}>⚡ Software Development & AI Solutions</div>
+      <div className="relative z-[1] flex max-w-[880px] flex-col items-center">
+        <div
+          className="animate-fade-up mb-7 inline-flex items-center gap-2 rounded-full border border-accent/35 bg-accent/10 px-4 py-2 text-[0.72rem] font-bold uppercase tracking-[0.12em] text-accent3 shadow-[0_0_40px_rgba(124,58,237,0.15)]"
+          style={{ animationDelay: '0s' }}
+        >
+          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-accent2 shadow-[0_0_10px_#a78bfa]" />
+          Software Development &amp; AI Solutions
+        </div>
 
-        <h1 className="animate-fade-up" style={{
-          fontFamily: 'Syne, sans-serif', fontWeight: 800,
-          fontSize: 'clamp(2.3rem, 5.5vw, 4.8rem)',
-          lineHeight: 1.06, letterSpacing: '-0.035em',
-          color: 'white', maxWidth: '800px',
-          animationDelay: '0.08s',
-        }}>
-          We Build Digital Products<br />
+        <h1
+          className="animate-fade-up font-syne text-[clamp(2.35rem,5.5vw,4.85rem)] font-extrabold leading-[1.05] tracking-[-0.035em] text-white"
+          style={{ animationDelay: '0.08s' }}
+        >
+          We Build Digital Products
+          <br />
           <span className="grad-text">That Scale</span>
         </h1>
 
-        <p style={{
-          color: 'var(--muted)', fontSize: '1.05rem', maxWidth: '540px',
-          margin: '1.2rem auto 2rem',
-        }}>
-          From cutting-edge web applications to intelligent AI systems, we help businesses transform their ideas into powerful digital solutions.
+        <p
+          className="animate-fade-up mx-auto mt-6 max-w-[540px] text-[1.05rem] leading-relaxed text-muted"
+          style={{ animationDelay: '0.16s' }}
+        >
+          From cutting-edge web applications to intelligent AI systems, we help businesses transform their ideas into
+          powerful digital solutions.
         </p>
 
-        <div style={{ display: 'flex', gap: '0.9rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/contact" style={{
-            background: 'var(--accent)', color: 'white', padding: '0.7rem 1.7rem',
-            borderRadius: '8px', fontWeight: 600, fontSize: '0.9rem',
-            textDecoration: 'none', boxShadow: '0 0 20px var(--glow)',
-          }}>Start Your Project</Link>
-          <Link href="/projects" style={{
-            border: '1px solid var(--border)', color: 'var(--text)',
-            padding: '0.7rem 1.7rem', borderRadius: '8px', fontWeight: 500,
-            fontSize: '0.9rem', textDecoration: 'none',
-          }}>View Our Work →</Link>
+        <div
+          className="animate-fade-up mt-10 flex flex-wrap items-center justify-center gap-4"
+          style={{ animationDelay: '0.22s' }}
+        >
+          <Link href="/contact" className="btn-primary">
+            Start Your Project
+          </Link>
+          <Link href="/projects" className="btn-secondary">
+            View Our Work →
+          </Link>
         </div>
 
-        {/* Stats bar */}
-        <div style={{
-          display: 'flex', flexWrap: 'wrap', justifyContent: 'center',
-          gap: '2px', marginTop: '4rem',
-          background: 'var(--surface)', border: '1px solid var(--border)',
-          borderRadius: '13px', overflow: 'hidden', maxWidth: '720px', width: '100%',
-        }}>
-          {[
-            { value: stats.projects, label: 'Projects Delivered' },
-            { value: stats.clients, label: 'Happy Clients' },
-            { value: stats.satisfaction, label: 'Client Satisfaction' },
-            { value: stats.experience, label: 'Years Experience' },
-          ].map((s, i) => (
-            <div key={i} style={{
-              flex: '1 1 140px', textAlign: 'center', padding: '1.5rem 1rem',
-              borderRight: i < 3 ? '1px solid var(--border)' : 'none',
-            }}>
-              <div className="stat-num">{s.value}</div>
-              <div style={{ color: 'var(--muted)', fontSize: '0.74rem', marginTop: '0.2rem' }}>{s.label}</div>
-            </div>
-          ))}
+        <div
+          className="animate-fade-up mt-20 w-full max-w-[720px] overflow-hidden rounded-2xl border border-border shadow-[0_24px_80px_rgba(0,0,0,0.45)] ring-1 ring-white/[0.05]"
+          style={{ animationDelay: '0.28s' }}
+        >
+          <div className="grid grid-cols-2 gap-px bg-border sm:grid-cols-4">
+            {[
+              { value: stats.projects, label: 'Projects Delivered' },
+              { value: stats.clients, label: 'Happy Clients' },
+              { value: stats.satisfaction, label: 'Client Satisfaction' },
+              { value: stats.experience, label: 'Years Experience' },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="group bg-surface/95 px-4 py-6 text-center transition-colors duration-300 hover:bg-surface3/95"
+              >
+                <div className="stat-num transition-transform duration-300 group-hover:scale-[1.02]">{s.value}</div>
+                <div className="mt-1 text-[0.74rem] text-muted">{s.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
+
+        <p className="scroll-hint" aria-hidden>
+          Scroll to explore
+        </p>
       </div>
     </section>
   )

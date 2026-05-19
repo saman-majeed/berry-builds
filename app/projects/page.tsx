@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
+// Your Supabase Storage Base URL
+const STORAGE_URL = "https://ngxjiihozulpdwjdyzro.supabase.co/storage/v1/object/public/project-images/";
+
 export default function ProjectsPage() {
   const [allProjects, setAllProjects] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -34,86 +37,98 @@ export default function ProjectsPage() {
     return acc
   }, {})
 
-  if (loading) return <div className="p-20 text-white text-center">Loading...</div>
+  if (loading) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center px-[5%] py-28 text-muted">
+        <span className="animate-pulse font-medium text-text">Loading projects…</span>
+      </div>
+    )
+  }
 
   return (
-    <div style={{ padding: '0 5% 80px', backgroundColor: 'black', minHeight: '100vh' }}>
+    <div className="relative min-h-screen px-[5%] pb-24 pt-10">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-[15%] top-32 h-48 w-48 rounded-full bg-accent/25 blur-[100px]"
+      />
 
-      {/* 1. Added Spacer to prevent Navbar overlap */}
-      <div style={{ height: '140px' }}></div>
-
-      {/* 2. Your ORIGINAL Header Text */}
-      <div style={{ textAlign: 'center', padding: '20px 0 50px' }}>
-        <span style={{ color: '#3b82f6', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-          Live Portfolio
-        </span>
-        <h1 style={{ fontSize: '2.8rem', color: 'white', margin: '10px 0', fontWeight: 800 }}>
+      <div className="relative mx-auto max-w-[1100px] text-center">
+        <span className="section-label">Live Portfolio</span>
+        <h1 className="mt-8 font-syne text-[clamp(1.85rem,4vw,2.65rem)] font-extrabold leading-tight tracking-tight text-white">
           Featured Live Web Projects – Multi-Industry Portfolio
         </h1>
-        <p style={{ color: '#71717a', maxWidth: '800px', margin: '0 auto', lineHeight: '1.6' }}>
-          {allProjects.length} A comprehensive collection of production-ready web applications spanning multiple industries including e-commerce, healthcare, fitness, education, legal services, and more. Each project showcases modern web development practices, responsive design, and industry-specific functionality.
+        <p className="mx-auto mt-6 max-w-[800px] leading-relaxed text-muted">
+          {allProjects.length} production-ready builds across ecommerce, healthcare, fitness, education, legal, and more
+          — each focused on responsive design, accessibility, and real business workflows.
         </p>
 
-        {/* 3. Search Bar integrated into your theme */}
-        <div style={{ maxWidth: '500px', margin: '30px auto 0' }}>
+        <div className="mx-auto mt-10 max-w-md">
           <input
-            type="text"
-            placeholder="Search projects..."
+            type="search"
+            placeholder="Search by name or category…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '14px 20px',
-              background: '#09090b',
-              border: '1px solid #27272a',
-              borderRadius: '10px',
-              color: 'white',
-              fontSize: '1rem',
-              outline: 'none',
-              textAlign: 'center'
-            }}
+            className="w-full rounded-xl border border-border bg-surface2/80 px-5 py-3.5 text-center text-text shadow-inner ring-1 ring-white/[0.04] backdrop-blur-sm transition-[border-color,box-shadow] placeholder:text-muted/70 focus:border-accent2/50 focus:outline-none focus:ring-2 focus:ring-accent/25"
           />
         </div>
       </div>
 
-      {/* 4. Your ORIGINAL Grouped Layout */}
-      {Object.entries(grouped).map(([cat, projects]) => (
-        <div key={cat} style={{ marginBottom: '3rem' }}>
-          <h2 style={{ color: 'white', borderBottom: '1px solid #27272a', paddingBottom: '10px', marginBottom: '20px', fontSize: '1.5rem' }}>
-            {cat}
-          </h2>
+      <div className="relative mx-auto mt-14 max-w-[1200px]">
+        {Object.entries(grouped).map(([cat, projects]) => (
+          <div key={cat} className="mb-16">
+            <h2 className="mb-6 border-b border-border pb-3 font-syne text-xl font-bold text-white">{cat}</h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-            {projects.map((p) => (
-              <div key={p.id} style={{ background: '#09090b', border: '1px solid #27272a', borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {projects.map((p) => (
+                <div
+                  key={p.id}
+                  className="hover-lift-card flex flex-col overflow-hidden rounded-2xl border border-border bg-surface2/80 shadow-lg ring-1 ring-white/[0.04]"
+                >
+                  <Link href={`/projects/${p.id}`} className="block flex-1 no-underline">
+                    <div className="relative h-48 overflow-hidden bg-surface3">
+                      {/* Robust verification checking if string contains a standard image suffix or an absolute web reference */}
+                      {p.image && (p.image.includes('.') || p.image.startsWith('http')) ? (
+                        <img
+                          src={p.image.startsWith('http') ? p.image : `${STORAGE_URL}${p.image}`}
+                          alt={p.name}
+                          className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.05]"
+                          onError={(e) => {
+                            // Automatically switches back to fallback state if standard request goes invalid
+                            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Missing+Asset';
+                          }}
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-4xl">
+                          {p.image || "🌐"}
+                        </div>
+                      )}
+                    </div>
 
-                <Link href={`/projects/${p.id}`} style={{ textDecoration: 'none' }}>
-                  <div style={{ height: '180px', background: '#18181b', position: 'relative' }}>
-                    {p.image ? (
-                      <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>🌐</div>
-                    )}
-                  </div>
-
-                  <div style={{ padding: '20px' }}>
-                    <h3 style={{ color: 'white', marginBottom: '10px', fontSize: '1.2rem' }}>{p.name}</h3>
-                    <p style={{ color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '10px' }}>
-                      {p.description?.substring(0, 80)}...
-                    </p>
-                  </div>
-                </Link>
-
-                <div style={{ padding: '0 20px 20px' }}>
-                  <Link href={p.url || '#'} target="_blank" style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'none', fontSize: '0.8rem' }}>
-                    View Live Site ↗
+                    <div className="p-6">
+                      <h3 className="font-syne text-lg font-bold text-white">{p.name}</h3>
+                      <p className="mt-2 line-clamp-2 text-[0.9rem] text-muted">
+                        {p.description?.substring(0, 100)}
+                        {p.description && p.description.length > 100 ? '…' : ''}
+                      </p>
+                    </div>
                   </Link>
+
+                  <div className="mt-auto border-t border-border px-6 py-4">
+                    <Link
+                      href={p.url || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-semibold text-accent2 no-underline transition-colors hover:text-accent3"
+                    >
+                      View Live Site ↗
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
